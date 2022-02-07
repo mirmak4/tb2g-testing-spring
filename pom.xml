@@ -22,6 +22,7 @@
         <!-- Spring -->
         <spring-framework.version>5.1.4.RELEASE</spring-framework.version>
         <spring-data-jdbc.version>2.0.0.M1</spring-data-jdbc.version>
+        <!--<spring-data-jdbc.version>2.1.0.RELEASE</spring-data-jdbc.version>-->
 
         <!-- Web dependencies -->
         <!-- Version update should also be done in wro.xml, petclinic.less and static resources: htmlHeader.tag and footer.tag-->
@@ -32,7 +33,7 @@
 
         <!-- Java EE / Java SE dependencies -->
         <tomcat.version>9.0.14</tomcat.version>
-        <jaxb.version>2.3.0</jaxb.version>
+        <jaxb.version>2.3.1</jaxb.version>
         <activation.version>1.1.1</activation.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <javax-jstl.version>1.2.2</javax-jstl.version>
@@ -40,6 +41,7 @@
 
         <!-- Persistence -->
         <spring-data-releasetrain.version>Lovelace-RELEASE</spring-data-releasetrain.version>
+        <!--<spring-data-releasetrain.version>2.1.0.RELEASE</spring-data-releasetrain.version>-->
         <hibernate.version>5.4.1.Final</hibernate.version>
         <hibernate-validator.version>6.0.14.Final</hibernate-validator.version>
         <hsqldb.version>2.4.1</hsqldb.version>
@@ -125,12 +127,15 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
+            <!--<version>2.1.0.RELEASE</version>-->
+            <version>2.1.0.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jdbc-core</artifactId>
-            <version>${spring-data-jdbc.version}</version>
+            <!--<version>${spring-data-jdbc.version}</version>-->
+            <version>2.0.0.M1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -217,17 +222,20 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${jaxb.version}</version>
+            <!--<version>${jaxb.version}</version>-->
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>${jaxb.version}</version>
+            <!--<version>${jaxb.version}</version>-->
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb.version}</version>
+            <!--<version>${jaxb.version}</version>-->
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
@@ -414,6 +422,20 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty-maven-plugin.version}</version>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.14.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                        <!--<version>${jaxb.version}</version>-->
+                        <version>3.0.2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
         </plugins>
