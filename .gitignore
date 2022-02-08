@@ -135,10 +135,34 @@ Desktop.ini
 ######################
 # Maven Wrapper
 ######################
-!.mvn/wrapper/maven-wrapper.jar
+#!.mvn/wrapper/maven-wrapper.jar
 
 ######################
 # ESLint
 ######################
 .eslintcache
 index.html
+
+
+#####################
+#    my ignores     #
+#####################
+# NetBeans specific #
+nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Class Files #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
