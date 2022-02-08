@@ -135,6 +135,8 @@ Desktop.ini
 ######################
 # Maven Wrapper
 ######################
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
 #!.mvn/wrapper/maven-wrapper.jar
 
 ######################
@@ -163,6 +165,3 @@ nb-configuration.xml
 *.jar
 *.war
 *.ear
-
-.mvn/wrapper/maven-wrapper.properties
-.mvn/wrapper/maven-wrapper.jar
