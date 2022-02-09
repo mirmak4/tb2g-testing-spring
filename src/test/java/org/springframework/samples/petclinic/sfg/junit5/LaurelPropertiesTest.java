@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
  * @author miron.maksymiuk
  */
 @TestPropertySource("classpath:laurel.properties")
-@ActiveProfiles("externalized")
+@ActiveProfiles("laurel-properties")
 @SpringJUnitConfig(classes = {LaurelPropertiesTest.TestConfig.class})
 public class LaurelPropertiesTest {
     
