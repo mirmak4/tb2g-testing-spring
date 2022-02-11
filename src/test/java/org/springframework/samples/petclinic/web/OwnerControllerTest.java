@@ -63,7 +63,19 @@ class OwnerControllerTest {
     private Collection<Owner> singleResult;
     private Owner jungingen;
     @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
+    private ArgumentCaptor<String> stringArgumentCaptor;
+    // match strings for returned views
+    private static final String createOrUpdateOwnerView = 
+            "owners/createOrUpdateOwnerForm";
+    private static final String ownersListView = 
+            "owners/ownersList";
+    private static final String redirectOwnerView = 
+            "redirect:/owners/%d";
+    private static final String redirectOwnerUriParamView = 
+            "redirect:/owners/%s";
+    private static final String findOwnersView = 
+            "owners/findOwners";
+    
 
     @BeforeEach
     public void setup() {
@@ -117,7 +129,7 @@ class OwnerControllerTest {
             .andExpect(model().attributeHasErrors("owner"))
             .andExpect(model().attributeHasFieldErrors("owner", "address"))
             .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
-            .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+            .andExpect(view().name(createOrUpdateOwnerView));
     }
 
     @Test
@@ -126,7 +138,7 @@ class OwnerControllerTest {
 
         ownerMockMvc.perform(get("/owners"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("owners/ownersList"));
+                .andExpect(view().name(ownersListView));
 
         then(clinicService).should().findOwnerByLastName(stringArgumentCaptor.capture());
 
@@ -146,7 +158,7 @@ class OwnerControllerTest {
         ownerMockMvc.perform(get("/owners")
                     .param("lastName", findJustOne))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1"));
+                .andExpect(view().name(redirectOwnerView.formatted(justOne.getId())));
 
         then(clinicService).should().findOwnerByLastName(anyString());
 
@@ -157,7 +169,7 @@ class OwnerControllerTest {
         ownerMockMvc.perform(get("/owners")
                     .param("lastName", "Dont find ME!"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("owners/findOwners"));
+                .andExpect(view().name(findOwnersView));
     }
 
     @Test
@@ -165,18 +177,17 @@ class OwnerControllerTest {
         ownerMockMvc.perform(get("/owners/new"))
             .andExpect(status().isOk())
             .andExpect(model().attributeExists("owner"))
-            .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+            .andExpect(view().name(createOrUpdateOwnerView));
     }
     
     public void testInitCreationForm() throws Exception {
         // given
-        String expectedView = "owners/createOrUpdateOwnerForm";
         // when
         String view = ownerController.initCreationForm(model);
         // then
         ownerMockMvc.perform(get("/owners/new"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(expectedView))
+                .andExpect(view().name(createOrUpdateOwnerView))
                 .andExpect(model().attributeExists("owner"));
     }
     
@@ -192,7 +203,7 @@ class OwnerControllerTest {
         // then
         ownerMockMvc.perform(get("/owners"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("owners/findOwners"));
+                .andExpect(view().name(findOwnersView));
         then(bindResult).should().rejectValue(anyString(), anyString(), anyString());
     }
     
@@ -207,7 +218,7 @@ class OwnerControllerTest {
         ownerMockMvc.perform(get("/owners"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("selections"))
-                .andExpect(view().name("owners/ownersList"));
+                .andExpect(view().name(ownersListView));
     }
     
     // return "redirect:/owners/" + owner.getId();
@@ -221,7 +232,7 @@ class OwnerControllerTest {
         // then
         ownerMockMvc.perform(get("/owners"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1410"));
+                .andExpect(view().name(redirectOwnerView.formatted(1410)));
     }
     
     // processUpdateOwnerForm(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") 1410) {
@@ -234,7 +245,7 @@ class OwnerControllerTest {
                 .param("telephone", "943457200")
                 .param("address", "Śniadeckich 2"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/{ownerId}"));
+                .andExpect(view().name(redirectOwnerUriParamView.formatted("{ownerId}")));
         verify(clinicService).saveOwner(any(Owner.class));
     }
     
@@ -247,7 +258,7 @@ class OwnerControllerTest {
                 // no required param telephone 
                 .param("address", "Śniadeckich 2"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+                .andExpect(view().name(createOrUpdateOwnerView));
         verify(clinicService, never()).saveOwner(any(Owner.class));
     }
 }
