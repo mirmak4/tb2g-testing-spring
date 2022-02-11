@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -12,6 +14,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.service.ClinicService;
@@ -26,7 +32,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
 @SpringJUnitWebConfig(locations = {"classpath:spring/mvc-test-config.xml", "classpath:spring/mvc-core-config.xml"})
 class OwnerControllerTest {
 
@@ -42,6 +62,8 @@ class OwnerControllerTest {
     private Collection<Owner> multiResults;
     private Collection<Owner> singleResult;
     private Owner jungingen;
+    @Captor
+    ArgumentCaptor<String> stringArgumentCaptor;
 
     @BeforeEach
     public void setup() {
@@ -67,8 +89,85 @@ class OwnerControllerTest {
         singleResult = new ArrayList<>();
         singleResult.add(jungingen);
     }
-    
+
+    @AfterEach
+    void tearDown() {
+        reset(clinicService);
+    }
+
+
     @Test
+    void testNewOwnerPostValid() throws Exception {
+        ownerMockMvc.perform(post("/owners/new")
+                    .param("firstName", "Jimmy")
+                    .param("lastName", "Buffett")
+                    .param("address", "123 Duval St ")
+                    .param("city", "Key West")
+                    .param("telephone", "3151231234"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void testNewOwnerPostNotValid() throws Exception {
+        ownerMockMvc.perform(post("/owners/new")
+                .param("firstName", "Jimmy")
+                .param("lastName", "Buffett")
+                .param("city", "Key West"))
+            .andExpect(status().isOk())
+            .andExpect(model().attributeHasErrors("owner"))
+            .andExpect(model().attributeHasFieldErrors("owner", "address"))
+            .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+            .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+
+    @Test
+    void testReturnListOfOwners() throws Exception {
+        given(clinicService.findOwnerByLastName("")).willReturn(Lists.newArrayList(new Owner(), new Owner()));
+
+        ownerMockMvc.perform(get("/owners"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("owners/ownersList"));
+
+        then(clinicService).should().findOwnerByLastName(stringArgumentCaptor.capture());
+
+        assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("");
+    }
+
+    @Test
+    void testFindOwnerOneResult() throws Exception {
+        Owner justOne = new Owner();
+        justOne.setId(1);
+        final String findJustOne = "FindJustOne";
+
+        justOne.setLastName(findJustOne);
+
+        given(clinicService.findOwnerByLastName(findJustOne)).willReturn(Lists.newArrayList(justOne));
+
+        ownerMockMvc.perform(get("/owners")
+                    .param("lastName", findJustOne))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/1"));
+
+        then(clinicService).should().findOwnerByLastName(anyString());
+
+    }
+
+    @Test
+    void testFindByNameNotFound() throws Exception {
+        ownerMockMvc.perform(get("/owners")
+                    .param("lastName", "Dont find ME!"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("owners/findOwners"));
+    }
+
+    @Test
+    void initCreationFormTest() throws Exception {
+        ownerMockMvc.perform(get("/owners/new"))
+            .andExpect(status().isOk())
+            .andExpect(model().attributeExists("owner"))
+            .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+    
     public void testInitCreationForm() throws Exception {
         // given
         String expectedView = "owners/createOrUpdateOwnerForm";
@@ -123,5 +222,32 @@ class OwnerControllerTest {
         ownerMockMvc.perform(get("/owners"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/owners/1410"));
+    }
+    
+    // processUpdateOwnerForm(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") 1410) {
+    @Test
+    public void testProcessUpdateOwnerFormValid() throws Exception {
+        ownerMockMvc.perform(post("/owners/{ownerId}/edit", 1410)
+                .param("firstName", "Ulryk")
+                .param("lastName", "Von Jungingen")
+                .param("city", "Koszaolin")
+                .param("telephone", "943457200")
+                .param("address", "Śniadeckich 2"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/{ownerId}"));
+        verify(clinicService).saveOwner(any(Owner.class));
+    }
+    
+    @Test
+    public void testProcessUpdateOwnerFormNotValid() throws Exception {
+        ownerMockMvc.perform(post("/owners/{ownerId}/edit", 1410)
+                .param("firstName", "Ulryk")
+                .param("lastName", "Von Jungingen")
+                .param("city", "Koszaolin")
+                // no required param telephone 
+                .param("address", "Śniadeckich 2"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+        verify(clinicService, never()).saveOwner(any(Owner.class));
     }
 }
