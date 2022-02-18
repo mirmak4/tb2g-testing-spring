@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import org.mockito.Mockito;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,13 +19,9 @@ import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,7 +36,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringJUnitWebConfig(locations = {"classpath:spring/mvc-test-config.xml", "classpath:spring/mvc-core-config.xml"})
@@ -158,7 +149,8 @@ class OwnerControllerTest {
         ownerMockMvc.perform(get("/owners")
                     .param("lastName", findJustOne))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name(redirectOwnerView.formatted(justOne.getId())));
+//                .andExpect(view().name(redirectOwnerView.formatted(justOne.getId())));
+                .andExpect(view().name(String.format(redirectOwnerView, justOne.getId() )));
 
         then(clinicService).should().findOwnerByLastName(anyString());
 
@@ -232,7 +224,8 @@ class OwnerControllerTest {
         // then
         ownerMockMvc.perform(get("/owners"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name(redirectOwnerView.formatted(1410)));
+//                .andExpect(view().name(redirectOwnerView.formatted(1410)));
+                .andExpect(view().name(String.format(redirectOwnerView, 1410 )));
     }
     
     // processUpdateOwnerForm(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") 1410) {
@@ -245,7 +238,9 @@ class OwnerControllerTest {
                 .param("telephone", "943457200")
                 .param("address", "Śniadeckich 2"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name(redirectOwnerUriParamView.formatted("{ownerId}")));
+//                .andExpect(view().name(redirectOwnerUriParamView.formatted("{ownerId}")));
+                .andExpect(view().name(String.format(redirectOwnerUriParamView, "{ownerId}" )));
+        
         verify(clinicService).saveOwner(any(Owner.class));
     }
     
