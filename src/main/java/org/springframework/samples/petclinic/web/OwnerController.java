@@ -75,6 +75,7 @@ public class OwnerController {
 
     @RequestMapping(value = "/owners/find", method = RequestMethod.GET)
     public String initFindForm(Map<String, Object> model) {
+        System.out.println("############################");
         model.put("owner", new Owner());
         return "owners/findOwners";
     }
