@@ -314,7 +314,7 @@
     <!-- Maven plugin versions are mentioned in order to guarantee the build reproducibility in the long term -->
     <build>
         <defaultGoal>install</defaultGoal>
-        <finalName>petclinic</finalName>
+        <finalName>PetClinicApp</finalName>
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
@@ -414,13 +414,13 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
+<!--            <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <!--<version>${jetty-maven-plugin.version}</version>-->
-                <!-- maven cant find plugin in repositories..... -->
+                <version>${jetty-maven-plugin.version}</version>
+                 maven cant find plugin in repositories..... 
                 <version>9.4.45.v20220203</version>
-            </plugin>
+            </plugin>-->
 <!--            <plugin>
                 <groupId>org.apache.tomee.maven</groupId>
                 <artifactId>tomee-maven-plugin</artifactId>
