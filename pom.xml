@@ -63,6 +63,7 @@
 
         <!-- Maven plugins -->
         <jetty-maven-plugin.version>9.4.14.v20181114</jetty-maven-plugin.version>
+        <jetty.http.port>9999</jetty.http.port>
     </properties>
 
     <dependencyManagement>
@@ -416,9 +417,9 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-maven-plugin.version}</version>
+                <!--<version>${jetty-maven-plugin.version}</version>-->
+                <version>9.4.45.v20220203</version>
             </plugin>
-            
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
