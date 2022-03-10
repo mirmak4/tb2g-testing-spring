@@ -440,6 +440,8 @@
                     <url>http://37.28.155.176:8080/manager/text</url>
                     <username>petro</username>
                     <password>petro4</password>
+                    <update>true</update>
+                    <path>/PetClinicApp</path>
                 </configuration>   
             </plugin>
             <plugin>
