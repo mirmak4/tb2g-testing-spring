@@ -418,7 +418,7 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <!--<version>${jetty-maven-plugin.version}</version>-->
-                <!-- maven cant find plugin in repositories.... -->
+                <!-- maven cant find plugin in repositories..... -->
                 <version>9.4.45.v20220203</version>
             </plugin>
             <plugin>
