@@ -428,7 +428,7 @@
                 <configuration>
                     <!--<tomeeVersion>1.7.1</tomeeVersion>-->
                     <tomeeClassifier>plus</tomeeClassifier>
-                    
+                    <tomeeHost>http://localhost:8080/manager/text</tomeeHost>
                 </configuration>
             </plugin>
             <plugin>
