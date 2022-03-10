@@ -441,6 +441,7 @@
                     <username>petro</username>
                     <password>petro4</password>
                     <update>true</update>
+                    <!--  keep same as in jenkins build  -->
                     <path>/PetClinicApp</path>
                 </configuration>   
             </plugin>
