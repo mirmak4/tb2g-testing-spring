@@ -64,6 +64,10 @@
         <!-- Maven plugins -->
         <jetty-maven-plugin.version>9.4.14.v20181114</jetty-maven-plugin.version>
         <jetty.http.port>9999</jetty.http.port>
+        
+        <!-- Build -->
+        <remoteInstallDir>/home/kazanik/jetty_webapps/PetClinicApp</remoteInstallDir>
+        <localInstallDir>C:\Users\miron.maksymiuk\NetBeansProjects\tb2g-testing-spring</localInstallDir>
     </properties>
 
     <dependencyManagement>
@@ -414,13 +418,17 @@
                     </dependency>
                 </dependencies>
             </plugin>
-<!--            <plugin>
+            <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty-maven-plugin.version}</version>
-                 maven cant find plugin in repositories..... 
-                <version>9.4.45.v20220203</version>
-            </plugin>-->
+                <!--<version>9.4.45.v20220203</version>-->
+                <configuration>
+                    <httpConnector>
+                        <port>${jetty.http.port}</port>
+                    </httpConnector>
+                </configuration>
+            </plugin>
 <!--            <plugin>
                 <groupId>org.apache.tomee.maven</groupId>
                 <artifactId>tomee-maven-plugin</artifactId>
@@ -477,7 +485,22 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.build.directory}/build.properties</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -503,6 +526,18 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>remoteInstallDir</id>
+            <build>
+                <directory>${remoteInstallDir}</directory>
+            </build>
+        </profile>
+        <profile>
+            <id>localInstallDir</id>
+            <build>
+                <directory>${localInstallDir}</directory>
+            </build>
         </profile>
    </profiles>
 
